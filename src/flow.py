@@ -9,15 +9,15 @@ batch_size = 32
 # Contagem do tempo
 start_time = time.time()
 
-# Carregando a Base de dados
-path_train = "../data/treinamento400"
-path_test = "../data/teste400"
+# --- CARREGANDO O DATASET PÚBLICO (EX: CHEST X-RAY PNEUMONIA) ---
+path_base = "../data/chest_xray/"
+path_train = path_base + "train"
+path_val = path_base + "val"
+path_test = path_base + "test"
 
 # Conjunto de treinamento
 train_ds = keras.utils.image_dataset_from_directory(
     path_train,
-    validation_split=0.2,
-    subset="training",
     seed=1337,
     image_size=image_size,
     batch_size=batch_size
@@ -25,9 +25,7 @@ train_ds = keras.utils.image_dataset_from_directory(
 
 # Conjunto de validação
 val_ds = keras.utils.image_dataset_from_directory(
-    path_train,
-    validation_split=0.2,
-    subset="validation",
+    path_val,
     seed=1337,
     image_size=image_size,
     batch_size=batch_size
@@ -40,7 +38,7 @@ test_ds = keras.utils.image_dataset_from_directory(
     batch_size=batch_size
 )
 
-# Definição do modelo
+# --- DEFINIÇÃO DO MODELO ---
 model = keras.Sequential([
     # Redimensiona as imagens 256x256
     keras.layers.Resizing(256, 256),
@@ -50,8 +48,8 @@ model = keras.Sequential([
     keras.layers.Dense(128, activation='relu'),
     # Camada densa com 64 neurônios e função de ativação ReLu
     keras.layers.Dense(64, activation='relu'),
-    # Camada de saida com 3 neurônios (para 3 classes) e função de ativação Softmax
-    keras.layers.Dense(3, activation='softmax')
+    # Camada de saida com 2 neurônios (PARA 2 CLASSES: Normal/Pneumonia)
+    keras.layers.Dense(2, activation='softmax')
 ])
 
 # Compilação do modelo
@@ -62,7 +60,7 @@ model.compile(
 )
 
 # Treinamendo do modelo
-print("Iniciando o treinamento do modelo...")
+print("Iniciando o treinamento do modelo com dataset de Pneumonia...")
 model.fit(
     train_ds,
     epochs=10,
