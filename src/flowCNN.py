@@ -9,15 +9,17 @@ batch_size = 32
 start_time = time.time()
 
 # --- Carregando a Base de dados ---
-path_train = "../data/treinamento400"
-path_test = "../data/teste400"
+path_base = "../data/COVID-19_Radiography_Dataset/"
+path_train = path_base + "train"
+path_test = path_base + "test"
+path_val = path_base + "val"
 
 train_ds = keras.utils.image_dataset_from_directory(
-    path_train, validation_split=0.2, subset="training", seed=1337,
+    path_train, seed=1337,
     image_size=image_size, batch_size=batch_size
 )
 val_ds = keras.utils.image_dataset_from_directory(
-    path_train, validation_split=0.2, subset="validation", seed=1337,
+    path_val, seed=1337,
     image_size=image_size, batch_size=batch_size
 )
 test_ds = keras.utils.image_dataset_from_directory(
@@ -48,7 +50,7 @@ model = keras.Sequential([
     keras.layers.Dropout(0.5),
 
     keras.layers.Dense(128, activation='relu'),
-    keras.layers.Dense(3, activation='softmax')  # 3 neurônios de saída (COVID, Normal, Pneumonia)
+    keras.layers.Dense(2, activation='softmax')  # 2 neurônios de saída (Normal, Pneumonia)
 ])
 
 # --- Compilação do modelo ---
@@ -62,7 +64,7 @@ model.compile(
 print("Iniciando o treinamento do modelo CNN...")
 model.fit(
     train_ds,
-    epochs=10,
+    epochs=5,
     verbose=2,
     validation_data=val_ds
 )
