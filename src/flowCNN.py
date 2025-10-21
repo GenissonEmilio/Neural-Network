@@ -9,7 +9,7 @@ batch_size = 32
 start_time = time.time()
 
 # --- Carregando a Base de dados ---
-path_base = "../data/COVID-19_Radiography_Dataset/"
+path_base = "../data/chest_xray/"
 path_train = path_base + "train"
 path_test = path_base + "test"
 path_val = path_base + "val"
@@ -25,6 +25,17 @@ val_ds = keras.utils.image_dataset_from_directory(
 test_ds = keras.utils.image_dataset_from_directory(
     path_test, image_size=image_size, batch_size=batch_size
 )
+
+print("\n--- Contagem de Imagens ---")
+# Nota: O Keras imprime automaticamente o número total de arquivos,
+# mas se você precisar do valor em uma variável:
+total_train = train_ds.cardinality().numpy() * batch_size
+total_val = val_ds.cardinality().numpy() * batch_size
+total_test = test_ds.cardinality().numpy() * batch_size
+
+print(f"Total de Imagens de Treinamento: {total_train}")
+print(f"Total de Imagens de Validação: {total_val}")
+print(f"Total de Imagens de Teste: {total_test}")
 
 # --- NOVO: DEFINIÇÃO DO MODELO CNN ---
 model = keras.Sequential([
